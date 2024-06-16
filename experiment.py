@@ -4,7 +4,6 @@ df = pandas.read_csv('rishon-letzion.csv')
 print("Raw table: ", df)
 
 import prtpy
-# from prtpy import BinnerKeepingContents, BinnerKeepingSums, printbins, partition
 
 numbins = 0
 entitlements = []
@@ -13,22 +12,21 @@ for i in range(len(df.values)):
     if (str(df.values[i][11]) != "nan"):
         numbins = numbins + 1
         entitlements.append(float((df.values[i][11])[:-1]) / 100)
-new_entitlements = []
-for i in range(len(entitlements)):
-    new_entitlements.append((entitlements[i]) / sum(entitlements))
+sumentitlements = sum(entitlements)
+entitlements = [e / sumentitlements for e in entitlements]
 
-print("Entitlements: ", new_entitlements)
+print(len(entitlements), " entitlements: ", entitlements)
 
 for i in range(len(df.values)):
     items.append(int(df.values[i][3].replace(',', '')))
 
-print("Items: ", items)
+print(len(items), " items: ", items)
 
 count_values = defaultdict(int)
 for num in items:
     count_values[num] += 1
 count_values = dict(count_values)
-print("count_values: ", count_values)
+print(len(count_values), " count_values: ", count_values)
 
 items = list()
 copies = list()
@@ -41,17 +39,25 @@ print("\n ### EXPERIMENT COMPLETE GREEDY ###\n")
 
 # start = time.time()
 # prtpy.printbins(prtpy.partition(algorithm=prtpy.partitioning.complete_greedy, 
-#     numbins=numbins, items=items, entitlements=new_entitlements, objective=prtpy.obj.MinimizeDistAvg))
+#     numbins=numbins, items=items, entitlements=entitlements, objective=prtpy.obj.MinimizeDistAvg))
 # end = time.time()
 # print(end - start)
 # sys.exit(1)
 
 print("\n ### EXPERIMENT ILP AVG ###\n")
 
-start = time.time()
+ex = experiments_csv.Experiment("results/", "ilp.csv")
 
-prtpy.printbins(prtpy.partition(algorithm=prtpy.partitioning.ilp_avg, 
-    numbins=numbins, items=items, entitlements=entitlements, copies=copies))
+def run_ilp_avg_on_part_of_the_data(numbins:int):
+    partition_and_sums = prtpy.partition(algorithm=prtpy.partitioning.ilp_avg,
+        numbins=numbins, items=items, entitlements=entitlements[:numbins], copies=copies,
+        outputtype = prtpy.out.PartitionAndSums)
+    print(partition_and_sums)
+    return {}
 
-end = time.time()
-print(end - start)
+input_ranges = {
+    "numbins": [10, 20, 30]
+}
+
+ex.run_with_time_limit(run_ilp_avg_on_part_of_the_data, input_ranges, time_limit=10)
+
