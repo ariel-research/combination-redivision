@@ -51,8 +51,8 @@ ex = experiments_csv.Experiment("results/", "ilp.csv")
 # ex.clear_previous_results()
 
 input_ranges = {
-    "numrows": range(10,500,5),
-    "time_limit": range(10, 40, 10),
+    "numrows": range(170,500,10),
+    "time_limit": range(20, 80, 20),
 }
 
 ex.run_with_time_limit(run_ilp_avg_on_part_of_the_data, input_ranges, time_limit=1000)
