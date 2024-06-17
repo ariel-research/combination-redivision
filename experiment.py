@@ -9,14 +9,14 @@ print("Raw table: ", df)
 def run_ilp_avg_on_part_of_the_data(numrows:int, time_limit:int):
     entitlements, values = get_input_from_raw_table(df.head(numrows))
     total_value = sum(values)
-    print(len(values), " values: ", values, "\nTotal value = ",total_value)
-    print(len(entitlements), " entitlements: ", entitlements, "\n")
+    print(len(values), " values", "\nTotal value = ",total_value)
+    print(len(entitlements), " entitlements")
 
     count_values = defaultdict(int)
     for num in values:
         count_values[num] += 1
     count_values = dict(count_values)
-    print(len(count_values), " count_values: ", count_values)
+    print(len(count_values), " count_values")
     items = list(count_values.keys())
     copies = list(count_values.values())
 
@@ -24,7 +24,7 @@ def run_ilp_avg_on_part_of_the_data(numrows:int, time_limit:int):
     partition_and_sums = prtpy.partition(algorithm=prtpy.partitioning.ilp_avg,
         numbins=numagents, items=items, entitlements=entitlements, copies=copies,
         outputtype = prtpy.out.PartitionAndSums, solver_name=mip.GRB, time_limit=time_limit)
-    
+
     balance_payments = [partition_and_sums.sums[i] - entitlement*total_value for i,entitlement in enumerate(entitlements)]
     for i,entitlement in enumerate(entitlements):
         due_value = entitlement*total_value
@@ -51,8 +51,8 @@ ex = experiments_csv.Experiment("results/", "ilp.csv")
 # ex.clear_previous_results()
 
 input_ranges = {
-    "numrows": range(170,500,10),
-    "time_limit": range(20, 80, 20),
+    "numrows": range(300,510,10),
+    "time_limit": [300, 450],
 }
 
 ex.run_with_time_limit(run_ilp_avg_on_part_of_the_data, input_ranges, time_limit=1000)
