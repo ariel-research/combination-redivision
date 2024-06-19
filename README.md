@@ -59,3 +59,7 @@ In order to solve the combination-redivision problem for different rights we use
 - Execute $A$ with an input of $V$ and the baskets, receiving an output of the numbers from $V$ allocated into the $k$ baskets.
 
 - Subtract $max\{p_1,\ldots ,p_k\} (sum(V))-p_i (sum(V))$ (the value that we started with) from each basket $i$ and return the final allocation.
+
+
+
+[Thesis_Eitan_Lichtman.pdf](https://github.com/user-attachments/files/15904650/Thesis_Eitan_Lichtman.pdf)
